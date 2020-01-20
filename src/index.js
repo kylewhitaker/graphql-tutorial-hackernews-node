@@ -13,7 +13,8 @@ let idCount = links.length;
 const resolvers = {
   Query: {
     info: () => `This is the API of a Hackernews Clone`,
-    feed: () => links
+    feed: () => links,
+    link: (parent, args) => links.find(link => link.id === args.id)
   },
   Mutation: {
     post: (parent, args) => {
@@ -24,6 +25,19 @@ const resolvers = {
       };
       links.push(link);
       return link;
+    },
+    updateLink: (parent, args) => {
+      const link = links.find(link => link.id === args.id);
+      if (link) {
+        if (args.url) link.url = args.url
+        if (args.description) link.description = args.description
+      }
+      return link;
+    },
+    deleteLink: (parent, args) => {
+      const linkIdx = links.findIndex(link => link.id === args.id);
+      if (linkIdx < 0) return null;
+      return links.splice(linkIdx, 1)[0];
     }
   }
 };
